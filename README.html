@@ -1,0 +1,1196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 2.0.12">
+<title>モデル図とコードの対応づけ</title>
+<link rel="stylesheet" href="css/mystyle.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body class="article">
+<div id="header">
+<h1>モデル図とコードの対応づけ</h1>
+</div>
+<div id="content">
+<div id="preamble">
+<div class="sectionbody">
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+この演習は、個人で実施します。
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_モデル図とコードの対応について考える">モデル図とコードの対応について考える</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_準備">【準備】</h3>
+<div class="olist arabic">
+<div class="title">外部設計の準備</div>
+<ol class="arabic">
+<li>
+<p>実機（EV3）とhakoniwaの開発環境が利用な可能なこと。</p>
+</li>
+<li>
+<p>Astah*が利用可能なこと。</p>
+</li>
+<li>
+<p>新規ブロジェクトを作成して <code>model_to_code.asta</code> として <code>models</code> ディレクトリに保存します。</p>
+</li>
+<li>
+<p>GoogleDriveの共有フォルダのSamplesフォルダから <code>samples01.tar.gz</code> を取得して、 <code>codes</code> ディレクトリに保存します。</p>
+<div class="ulist">
+<ul>
+<li>
+<p>実際に動作させるときに使う hakoniwa や実機用の環境と異なる場所なのに注意します。</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><code>samples01.tar.gz</code> を展開します。</p>
+<div class="ulist">
+<ul>
+<li>
+<p>展開した結果、ファイルの場所は <code>model_to_code＞codes＞sample01＞app.c</code> のようになるでしょう。</p>
+</li>
+</ul>
+</div>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_演習モデル図と対応づいていないコードを調べる">【演習】モデル図と対応づいていないコードを調べる</h3>
+<div id="sample01_app_png" class="imageblock">
+<div class="content">
+<img src="images/pic1.png" alt="pic1" width="25%">
+</div>
+<div class="title">図 1. sample01のアクティビティ図</div>
+</div>
+<div id="sample01_app_c" class="exampleblock">
+<div class="title">リスト 1. <code>sample01/app.c</code></div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-c" data-lang="c">#include "app.h"
+#include "util.h"
+
+void main_task(intptr_t unused) { <i class="conum" data-value="1"></i><b>(1)</b>
+  init_f("sample01");
+  ev3_motor_config(EV3_PORT_A, LARGE_MOTOR); <i class="conum" data-value="2"></i><b>(2)</b>
+  ev3_motor_config(EV3_PORT_C, LARGE_MOTOR);
+  ev3_sensor_config(EV3_PORT_1, TOUCH_SENSOR);
+
+  ev3_motor_set_power(EV3_PORT_A, 20);
+  ev3_motor_set_power(EV3_PORT_C, 20);
+
+  while(!ev3_touch_sensor_is_pressed(EV3_PORT_1)) {
+      tslp_tsk(20 * 1000); <i class="conum" data-value="3"></i><b>(3)</b>
+  }
+
+  ev3_motor_set_power(EV3_PORT_A, -20);
+  ev3_motor_set_power(EV3_PORT_C, -20);
+
+  tslp_tsk(2000 * 1000);
+
+  ev3_motor_stop(EV3_PORT_A, false);
+  ev3_motor_stop(EV3_PORT_C, false);
+
+  ext_tsk(); <i class="conum" data-value="4"></i><b>(4)</b>
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>このソースは、GitHubやプレビューでは見えないことがあります。
+そのときは、Asciidoctor でHTMLに変換して確認してください。</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p><a href="#sample01_app_c">リスト 1</a> が <a href="#sample01_app_png">図 1</a> の実装出会った場合、このコードの問題点を考えてみましょう。</p>
+</div>
+<div id="codes_issues" class="olist arabic">
+<div class="title">コードの問題点</div>
+<ol class="arabic">
+<li>
+<p>問題点を書く。</p>
+</li>
+<li>
+<p>問題点を書く。</p>
+</li>
+</ol>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+書いたらコミットします。
+</td>
+</tr>
+</table>
+</div>
+<div id="pic2_png" class="imageblock">
+<div class="content">
+<img src="images/pi2.png" alt="pi2" width="25%">
+</div>
+<div class="title">図 2. ステートマシン図の振舞いが仕様と合っていない例</div>
+</div>
+<div id="pic2_spec_list" class="olist arabic">
+<div class="title">動作の仕様</div>
+<ol class="arabic">
+<li>
+<p>荷物が載ったら前進する</p>
+</li>
+<li>
+<p>壁にぶつかったら止まる</p>
+</li>
+<li>
+<p>荷物が降ろされたら後退する</p>
+</li>
+<li>
+<p>2秒経ったら止まる</p>
+</li>
+<li>
+<p>上記を繰り返す</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p><a href="#pic2_png">図 2</a> と <a href="#pic2_spec_list">動作の仕様</a>  の対応に関する問題点を考えていましょう。</p>
+</div>
+<div class="paragraph">
+<p>ステートマシン図と動作仕様の間の問題点を下記に箇条書きにしてください。</p>
+</div>
+<div id="stm_issues" class="olist arabic">
+<div class="title">ステートマシン図の問題点</div>
+<ol class="arabic">
+<li>
+<p>問題点を書く。</p>
+</li>
+<li>
+<p>問題点を書く。</p>
+</li>
+</ol>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+書いたらコミットします。
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_構造のモデル図とコードの対応づけ">構造のモデル図とコードの対応づけ</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_演習コードの現状をクラス図で表す">【演習】コードの現状をクラス図で表す</h3>
+<div class="paragraph">
+<p><a href="#sample01_app_c">リスト 1</a> をそのままクラス図で表してみましょう。</p>
+</div>
+<div class="olist arabic">
+<div class="title"><code>sample01</code> のクラス図を作成する</div>
+<ol class="arabic">
+<li>
+<p><code>model_to_code.asta</code> を開き、クラス図を追加します。</p>
+</li>
+<li>
+<p>クラス図の名前を「sample01のクラス図」とします。</p>
+</li>
+<li>
+<p>sample01のままのクラス図を描きます。</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>作成したクラス図を <code>sample01_class_01.png</code> として <code>images</code> ディレクトリに保存します。</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="images/sample01_class_01.png" alt="sample01 class 01" width="100%">
+</div>
+<div class="title">図 3. <code>sample01</code> のクラス図</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+ここでコミットしておきます。
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_演習コードを見直す">【演習】コードを見直す</h3>
+<div class="paragraph">
+<p><a href="#stm_issues">ステートマシン図の問題点</a> 、 <a href="#codes_issues">コードの問題点</a> について対処した場合はどのようなコードになるか見直してみてください。</p>
+</div>
+<div class="olist arabic">
+<div class="title"><code>sample01</code> のコードを見直す</div>
+<ol class="arabic">
+<li>
+<p><code>codes</code> ディレクトリの <code>sample01</code> を複製して、 <code>sample01-01</code> を作ります。</p>
+</li>
+<li>
+<p><code>sample01-01/app.c</code> を編集して、問題に対処したコードに書き直します。</p>
+<div class="ulist">
+<ul>
+<li>
+<p>編集したコードが <a href="#sample01_01_app_c">リスト 2</a> に表示されます。</p>
+</li>
+<li>
+<p>表示できないときは <code>Unresolved directive in README.adoc - include::codes/sample01-01/app.c[]</code> となっているでしょう。</p>
+</li>
+</ul>
+</div>
+</li>
+</ol>
+</div>
+<div id="sample01_01_app_c" class="exampleblock">
+<div class="title">リスト 2. <code>sample01-01/app.c</code></div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-c" data-lang="c">Unresolved directive in README.adoc - include::codes/sample01-01/app.c[]</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+ここでコミットしておきます。
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_演習見直したコードに合うクラス図を作成する">【演習】見直したコードに合うクラス図を作成する</h3>
+<div class="paragraph">
+<p><code>sample01</code> のクラス図を作ったときと同じように、 <code>sample01-01</code> のクラス図を作りましょう。</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>この演習では理解のために、コードを直してからモデルを直しています。
+これで変換方式が決まれば、その方式に合わせて、モデルからコードに変換できるようになるわけです。</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p><a href="#sample01_01_app_c">リスト 2</a> をそのままクラス図で表してみましょう。</p>
+</div>
+<div class="olist arabic">
+<div class="title"><code>sample01-01</code> のクラス図を作成する</div>
+<ol class="arabic">
+<li>
+<p><code>model_to_code.asta</code> を開き、クラス図を追加します。</p>
+</li>
+<li>
+<p>クラス図の名前を「sample01-01のクラス図」とします。</p>
+</li>
+<li>
+<p>sample01のままのクラス図を描きます。</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>作成したクラス図を <code>sample01_01_class_01.png</code> として <code>images</code> ディレクトリに保存します。</p>
+</div>
+<div id="sample01_01_class_01_png" class="imageblock">
+<div class="content">
+<img src="images/sample01_01_class_01.png" alt="sample01 01 class 01" width="100%">
+</div>
+<div class="title">図 4. <code>sample01-01</code> のクラス図</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+ここでコミットしておきます。
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>見直したコードやクラス図には、 <code>Porter</code> クラス、 <code>Driver</code> クラス、 <code>Bumper</code> クラスなどが追加できました。
+最初にわからないといっていたことがらが、見えるかたちになったでしょうか。</p>
+</div>
+<div class="paragraph">
+<p>この検討の結果、階層化アーキテクチャがみいだせました（ <a href="#layered_arch_01">図 5</a> ）。</p>
+</div>
+<div id="layered_arch_01" class="imageblock">
+<div class="content">
+<img src="images/layered_arch.png" alt="layered arch" width="75%">
+</div>
+<div class="title">図 5. 階層化アーキテクチャがみいだせた</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_演習クラス図にパッケージを追加しよう">【演習】クラス図にパッケージを追加しよう</h3>
+<div class="paragraph">
+<p>階層化アーキテクチャが見いだせたので、 <code>sample01-01</code> も階層に合うよう編集しましょう。</p>
+</div>
+<div class="paragraph">
+<p><a href="#sample01_01_class_01_png">図 4</a> を見直して、パッケージを追加します。</p>
+</div>
+<div class="olist arabic">
+<div class="title"><code>sample01-01</code> にパッケージにパッケージを追加する</div>
+<ol class="arabic">
+<li>
+<p>「sample01-01のクラス図」の並びに「パッケージ」を追加します。</p>
+</li>
+<li>
+<p>追加したパッケージの名前に「app」とつけます（アプリケーションドメインの意味）。</p>
+</li>
+<li>
+<p>アプリケーションドメインに含まれるクラスを、このパッケージに移動します。</p>
+</li>
+<li>
+<p>同様にして「unit」パッケージを追加して、ロボットのユニットのクラスを移動します。</p>
+</li>
+<li>
+<p>同様にして「ev3rt」パッケージを追加して、EV3RTのモーターやセンサー、OSのAPIのクラスを移動します。</p>
+</li>
+<li>
+<p>それぞれのクラスを右クリックして、名前の表示/非表示から「名前空間」を表示するよう設定します。</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>porter</code> が <code>app::porter</code> のようにパッケージ名がついた表示に変わります。</p>
+</li>
+</ul>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>作成したクラス図を <code>sample01_01_class_02.png</code> として <code>images</code> ディレクトリに保存します。</p>
+</div>
+<div id="sample01_01_class_02_png" class="imageblock">
+<div class="content">
+<img src="images/sample01_01_class_02.png" alt="sample01 01 class 02" width="100%">
+</div>
+<div class="title">図 6. <code>sample01-01</code> にパッケージじを追加したクラス図</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+ここでコミットしておきます。
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_構図のモデルとコードの対応のまとめ">構図のモデルとコードの対応のまとめ</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>コードの構造を図で表してみた</p>
+<div class="ulist">
+<ul>
+<li>
+<p>失われた情報を追加して図やコードを見直した</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>責務の委譲</p>
+<div class="ulist">
+<ul>
+<li>
+<p>自分の仕事以外は別のクラスに任せる(委譲)ようになった</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>情報隠蔽</p>
+<div class="ulist">
+<ul>
+<li>
+<p>任されたクラスは、仕事の詳細を隠蔽している</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>ドメイン分割</p>
+<div class="ulist">
+<ul>
+<li>
+<p>複数のクラスに分けたしたことで、使うことばが変わった</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>仕様と設計と実装がつながった</p>
+<div class="ulist">
+<ul>
+<li>
+<p>使用で使っていることばが、実装にも使われている</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_振舞いのモデル図とコードの対応づけ">振舞いのモデル図とコードの対応づけ</h2>
+<div class="sectionbody">
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+この演習は、個人で実施します。
+</td>
+</tr>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_振舞いに使うモデル図">振舞いに使うモデル図</h3>
+<div class="ulist">
+<div class="title">振舞いのモデル</div>
+<ul>
+<li>
+<p>システムやコードの動き方を説明するモデルです。</p>
+</li>
+<li>
+<p>「動的モデル」と呼ぶこともあります。</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title">振舞いを表すUMLのモデル図</div>
+<ul>
+<li>
+<p>ステートマシン図（状態遷移図・状態遷移表）</p>
+</li>
+<li>
+<p>nシーケンス図</p>
+</li>
+<li>
+<p>アクティビティ図</p>
+</li>
+<li>
+<p>コミュニケーション図</p>
+</li>
+<li>
+<p>など</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_振舞いのモデルの利用場面">振舞いのモデルの利用場面</h3>
+<div class="ulist">
+<div class="title">外側からみた振舞い</div>
+<ul>
+<li>
+<p>外側から観測できる振る舞いを描く。</p>
+</li>
+<li>
+<p>外部設計、インターフェース設計用。</p>
+</li>
+</ul>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="images/stm_extrnal_use.png" alt="stm extrnal use" width="75%">
+</div>
+<div class="title">図 7. 外側からみた振舞い</div>
+</div>
+<div class="ulist">
+<div class="title">内部の振舞い</div>
+<ul>
+<li>
+<p>構成要素がどう振る舞うかを描く。</p>
+</li>
+<li>
+<p>内部設計、実装向け。</p>
+</li>
+</ul>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="images/stm_internal_use.png" alt="stm internal use" width="75%">
+</div>
+<div class="title">図 8. 内部の振舞い</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_振舞いのモデルの対応づけ">振舞いのモデルの対応づけ</h3>
+<div class="ulist">
+<div class="title">振舞いのモデルの対応づけ</div>
+<ul>
+<li>
+<p>クラスの振舞いを表すステートマシン図に対応づけ。</p>
+</li>
+<li>
+<p>内部の振舞いの方を利用する。</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>設計で作成するクラス図とステートマシン図を元に、決めたルールに従ってコードを実装するようルールを定めます。
+これを「実装方式（変換ルール）」と呼びます。
+設計の前にこの対応づけのルールを決めておいて、それから設計するわけです。</p>
+</div>
+<div class="ulist">
+<div class="title">振舞いのモデルの対応づけルール</div>
+<ul>
+<li>
+<p>ルール０</p>
+<div class="ulist">
+<ul>
+<li>
+<p>クラスの振舞いを担当するメソッドを決めます。</p>
+</li>
+<li>
+<p>クラスにそのメソッドがなかったら、追加します。</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>ルール１</p>
+<div class="ulist">
+<ul>
+<li>
+<p>ステートマシンの実装に使う繰り返し処理には周期ハンドラを使います。</p>
+</li>
+<li>
+<p><code>sample01</code> は使っていません。 <code>sample02</code> が使っている例です。</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>ルール２</p>
+<div class="ulist">
+<ul>
+<li>
+<p>設計時するときは、アクションを状態に紐づけておきます（Mooreモデル）。</p>
+</li>
+<li>
+<p>実装時は、switch文を使い、状態１つに１つのcaseを割り当てることにします。</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>ルール３</p>
+<div class="ulist">
+<ul>
+<li>
+<p>アクションで使えるのは、そのクラス自身の操作か関連するクラスの操作です。</p>
+<div class="ulist">
+<ul>
+<li>
+<p>操作は、メソッドとも呼びます。</p>
+</li>
+<li>
+<p>C言語の場合、この演習の命名規則では <code>クラス名_操作名</code> のように、クラス名の接頭詞（プレフィックス）をつけた関数名になります。</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>処理が不足なら、そのクラス自身の操作か関連するクラスに操作を追加して、それを使うことを検討します。</p>
+</li>
+<li>
+<p>関連しないクラスのメソッドを呼び出すことはできません（もちろんメソッドの中で使うこともできません）。それは、新しい関連を引くのと同じ意味になってしまうからです。</p>
+<div class="ulist">
+<ul>
+<li>
+<p>このようなことが起きてしまう場合、使いたい操作を持つクラスへ関連を追加するか、使いたい操作を持つクラスと使う側のクラスの間に、代わりに呼び出しをする操作を持つクラスを挿入します。</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>ルール４</p>
+<div class="ulist">
+<ul>
+<li>
+<p>イベント発生は、アクションの処理中にデバイスや時間の変化をポーリングする方法で実現します。</p>
+</li>
+<li>
+<p>この方法では、変化点ではなく、ある時点の値を取得して判断することに注意します。</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_準備_2">【準備】</h3>
+<div class="olist arabic">
+<div class="title">振舞いのモデルとコードを作成する準備</div>
+<ol class="arabic">
+<li>
+<p>実機（EV3）かhakoniwaの開発環境の <code>sdk/workspace</code> で <code>sample01</code> を複製して <code>sample11</code> を作ります。</p>
+<div class="ulist">
+<ul>
+<li>
+<p>この演習で扱う動作に合わせて、このあと <code>sample11/app.c</code> を書き換えます。</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><code>sample01.asta</code> を複製して <code>sample11.asta</code> を作ります。</p>
+<div class="ulist">
+<ul>
+<li>
+<p>ステートマシン図を追加して、動作の仕様をモデルで表します。</p>
+</li>
+</ul>
+</div>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_演習振舞いのモデルを作成する">【演習】振舞いのモデルを作成する</h3>
+<div class="paragraph">
+<p>構造のモデルを見直した結果できた <a href="#sample01_01_class_02_png">図 6</a> を元に、別の動作をするプログラムを考え、クラスや操作をどのようにモデル図やコードに半絵すればよいのか考えましょう。</p>
+</div>
+<div class="paragraph">
+<p>まず、モデル図に振舞いのモデルとしてステートマシン図を追加します。
+<code>sample11</code> で、 <code>sample01</code> から変更したい動作の仕様は、次のようなものです。</p>
+</div>
+<div class="olist arabic">
+<div class="title"><code>sample11</code> 動作の仕様</div>
+<ol class="arabic">
+<li>
+<p>荷物が載ったら前進する</p>
+</li>
+<li>
+<p>壁にぶつかったら止まる</p>
+</li>
+<li>
+<p>荷物が降ろされたら後退する</p>
+</li>
+<li>
+<p>2秒経ったら止まる</p>
+</li>
+<li>
+<p>上記を繰り返す</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>この仕様に合わせてステートマシン図を書きます。</p>
+</div>
+<div class="olist arabic">
+<div class="title">クラス <code>Porter</code> にステートマシン図を追加する</div>
+<ol class="arabic">
+<li>
+<p>構造ツリーで <code>Porter</code> クラスを選択し、右クリックして「図の追加」から「ステートマシン図」を追加します。</p>
+</li>
+<li>
+<p>プロパティで、追加した図の名前を「Porterのステートマシン図」とします。</p>
+</li>
+</ol>
+</div>
+<div class="olist arabic">
+<div class="title">ステートマシン図を作成する</div>
+<ol class="arabic">
+<li>
+<p>図を編集して、動作の仕様で使っていることばでステートマシン図を作成します。</p>
+<div class="ulist">
+<ul>
+<li>
+<p>状態名はあとでつけます。</p>
+</li>
+<li>
+<p>「〜が起きたら」を「〜が起きた、なった、経った」と読み替えて、状態遷移のイベントにします。</p>
+</li>
+<li>
+<p>「〜をする」を遷移先の状態のアクションに記載します。</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>イベントとアクションが書けたら、状態名をつけます（だいたい次のいずれか）。</p>
+<div class="ulist">
+<ul>
+<li>
+<p>いちばん期待しているイベント（またはそれが起きることを示す業務上のできごと）を使って「〜待ち」とつけます。</p>
+</li>
+<li>
+<p>イベントが起きるのを待っている間の処理（またはそれを示す業務上の作業名）を使って「〜中」とつけます。</p>
+</li>
+<li>
+<p>最後の状態は、イベントを待たないし、継続する処理もないので、「完了、終了、到着」といった名前をつけます。</p>
+</li>
+</ul>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>作成したクラス図を <code>sample11_porter_stm_01.png</code> として <code>images</code> ディレクトリに保存します。</p>
+</div>
+<div id="sample11_porter_stm_01_png" class="imageblock">
+<div class="content">
+<img src="images/sample11_porter_stm_01.png" alt="sample11 porter stm 01" width="100%">
+</div>
+<div class="title">図 9. <code>Porter</code> にステートマシン図を追加した</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+ここでコミットしておきます。
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_演習振舞いのモデルに合うコードを作成する">【演習】振舞いのモデルに合うコードを作成する</h3>
+<div class="paragraph">
+<p>作成したステートマシン図に合うような <code>sample11</code> のコードを作成しましょう。</p>
+</div>
+<div class="paragraph">
+<p>まず、状態用の定数、状態変数を用意します（ <a href="#add_states">リスト 3</a> ）。</p>
+</div>
+<div id="add_states" class="exampleblock">
+<div class="title">リスト 3. <code>sample11/app.c</code></div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-c" data-lang="c">typedef enum {
+  P_STATE_0, P_STATE_1, P_STATE_2, P_STATE_3 <i class="conum" data-value="1"></i><b>(1)</b>
+} porter_state; <i class="conum" data-value="2"></i><b>(2)</b>
+
+porter_state p_state = P_STATE_0; <i class="conum" data-value="3"></i><b>(3)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>状態の定数を定義します。この状態名は仮のものです。実際にはみなさんがステートマシン図につけたものと合わせましょう。</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>状態名の enum を typedef した型を定義します。</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>現在の状態を保持する変数を定義します。</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>次に、状態に対応したswitch文を用意します（ <a href="#add_switch">リスト 4</a> ）。
+ここでは、 <code>Porter</code> クラスの「運搬する ( <code>transport</code> ）」という操作を担う関数の中身を作ります。</p>
+</div>
+<div id="add_switch" class="exampleblock">
+<div class="title">リスト 4. <code>sample11/app.c</code></div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-c" data-lang="c">void porter_transport(void) {
+switch(p_state) { <i class="conum" data-value="1"></i><b>(1)</b>
+  case P_STATE_0: <i class="conum" data-value="2"></i><b>(2)</b>
+    break;
+  case P_STETE_1:
+    break;
+  case P_STATE_2:
+    break;
+  case P_STATE_3:
+    break;
+  default:
+    break;
+  }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>ステートマシン図を、状態を場合分けするswitch文として実装します。</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>このcase文には、みなさんが <a href="#add_states">リスト 3</a> で定義した状態名を並べます。</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>作成したswitch文に、アクションとイベントチェックを追加します。
+このとき、 <a href="#action_and_transition_01">図 10</a> のようにステートマシン図からイベントとアクションを参照して作ります。</p>
+</div>
+<div id="action_and_transition_01" class="imageblock">
+<div class="content">
+<img src="images/action_and_transition.png" alt="action and transition">
+</div>
+<div class="title">図 10. アクションとイベントチェックのステートマシン図とコードの対応関係</div>
+</div>
+<div id="action_and_transition_02" class="exampleblock">
+<div class="title">リスト 5. アクションとイベントチェックの処理を追加する方法</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-c" data-lang="c">int P_ENTRY = true; <i class="conum" data-value="1"></i><b>(1)</b>
+
+void porter_transport(void) {
+switch(p_state) {
+  case P_STATE_0:
+    if( P_ENTRY ) {
+      deiver_stop();
+      P_ENTRY = false;
+    }
+    if( carrier_cargo_is_loaded() ) {
+      p_state = P_STATE_1;
+      P_ENTRY = true;
+    }
+    break;
+    // ...
+  case P_STETE_X:
+    if( P_ENTRY ) { <i class="conum" data-value="2"></i><b>(2)</b>
+    // entryの処理
+    P_ENTRY = false;
+    }
+    // doの処理
+    deiver_forward(); <i class="conum" data-value="3"></i><b>(3)</b>
+
+    // イベントチェック
+    if( イベントを調べる関数の呼び出し() ) { <i class="conum" data-value="4"></i><b>(4)</b>
+      p_state = 遷移先の状態;
+      P_ENTRY = true;
+    }
+    // 他にも待っているイベントがあれば、ここに書く
+
+    if( P_ENTRY ) { <i class="conum" data-value="5"></i><b>(5)</b>
+      // exitの処理
+    }
+    break;
+    // ...
+  }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>entry/do/exitを処理するための各状態の内部状態を覚えておく変数。この変数がtrueなら、直前は状態が変化したタイミング。この変数がfalseなら、すでに現在の状態になったあと。</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>entry の処理。これは、この状態になった時にだけ実行する。ステートマシン図にentryの処理がなくても、必ず用意して <code>P_ENTRY=false;</code> を書いておく。</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>do の処理。同じ状態にいる間、繰り返し実行する。</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>イベントチェック。イベントの発生と状態遷移を書く。待っているイベントごとにそのイベントの発生を調べる関数を呼び出すif文を書く。これがtrueなら、次の状態へ遷移するので、状態変数 <code>p_state</code> を書き換える。また、ここで <code>P_ENTRY=true;</code> としておくのは、この状態から抜けるときには exitの処理を実行させるため。</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>exitの処理。イベントが発生した時に、この処理を実行してから次の状態へ遷移する。<code>P_ENTRY</code> はイベント発生のときにはイベントチェックで true にしているので、このif文がtrueになるのは、いくつかあるイベントのうち少なとも１つが発生した時。</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>sample11/app.cを書き換えると、 <a href="#action_and_transition_03">リスト 6</a> に自分が作成したステートマシン図に合わせたコードが表示されます。（書いていないか、ファイル名や場所が異なる場合は、 <code>Unresolved directive in README.adoc - include::codes/sample11/appc.[]</code> のような表示になります。</p>
+</div>
+<div id="action_and_transition_03" class="exampleblock">
+<div class="title">リスト 6. <code>sample11/app.c</code></div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-c" data-lang="c">Unresolved directive in README.adoc - include::codes/sample11/appc.[]</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_準備タイマーを実験する">【準備】タイマーを実験する</h3>
+<div class="paragraph">
+<p>「2秒経過した」という動作は、他に何もすることがなければ <code>sample01</code> のときのように <code>tslp_tsk</code> を使えばできます。
+しかし、これはプログラムをスリープさせているので、他の処理もできません。
+他の処理を実行しながら時間の経過を待つには、別の方法が必要です。</p>
+</div>
+<div class="paragraph">
+<p>タイマーは、一定の時間経過を調べるためのしくみとしてよく使われます。
+この演習用の簡単なタイマーを用意したので、これを使ってみましょう。</p>
+</div>
+<div class="olist arabic">
+<div class="title">タイマーを使う準備</div>
+<ol class="arabic">
+<li>
+<p><code>code</code> ディレクトリの <code>sample11</code> ディレクトリを複製して <code>sample12</code>  を作ります。</p>
+</li>
+<li>
+<p>タイマーのサンプルとしGoogleDriveのSamplesに <code>timer01.tar.gz</code> を用意してあります。これをworkspaceへコピーして、 <code>tar</code> コマンドで展開します。</p>
+</li>
+<li>
+<p><code>unit/timer.h</code> <code>unit/timer.c</code> を <code>sample12</code> の中にコピーします。</p>
+</li>
+<li>
+<p><code>sample11</code> の <code>Makefile.inc</code> を修正します。</p>
+<div class="ulist">
+<ul>
+<li>
+<p>何箇所かある <code>APPL_COBJS += util.o</code> となっているところを、 <code>APPL_COBJS += util.o timer.o</code> と変更します。</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><code>sample11.asta</code> のクラス図に、タイマークラスを追加します。</p>
+</li>
+<li>
+<p>クラス図にタイマークラスを追加します。</p>
+</li>
+</ol>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="images/timer.png" alt="timer" width="25%">
+</div>
+<div class="title">図 11. タイマークラス</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_演習タイマーを使うようサンプルを修正する">【演習】タイマーを使うようサンプルを修正する</h3>
+<div class="paragraph">
+<p>動作の仕様の「2秒経ったら止まる」ところについて考えてみます、
+ここは、2秒間は走行する（ここでは後退するですね）ということですから、走りながら2秒待つことになります。</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>タイマーで設定した時間が経過したことを「タイマーが発火した」といいます。
+期待したイベントが発生しないまま、備えに用意したタイマーが発火することを「タイムアウトした」といいます。</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>そこで、次のように処理を考えます。</p>
+</div>
+<div class="olist arabic">
+<div class="title">タイマーの起動から発火までの処理</div>
+<ol class="arabic">
+<li>
+<p>時間が経つのを待っている状態のentryで2秒のタイマーを起動します。</p>
+</li>
+<li>
+<p>イベントチェックで時間が経過したかどうかを調べます。</p>
+</li>
+<li>
+<p>イベントが発生していたら、2秒経ったとみなして次の状態へ遷移します。</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>図にすると、 <a href="#timer_stm_example">図 12</a>  のようになります。</p>
+</div>
+<div id="timer_stm_example" class="imageblock">
+<div class="content">
+<img src="images/timer2.png" alt="timer2">
+</div>
+<div class="title">図 12. タイマーを使うところのステートマシン図の描き方の例</div>
+</div>
+<div class="paragraph">
+<p>これを真似て <code>sample12</code> のステートマシン図を書き直してみましょう（ <a href="#sample12_porter_stm_03_png">図 13</a> ）。</p>
+</div>
+<div id="sample12_porter_stm_03_png" class="imageblock">
+<div class="content">
+<img src="images/sample12_porter_stm_03.png" alt="sample12 porter stm 03" width="100%">
+</div>
+<div class="title">図 13. ステートマシン図を更新した</div>
+</div>
+<div class="paragraph">
+<p>また、<code>sample12/app.c</code> をタイマーを使うように修正しましょう（ <a href="#action_and_transition_04">リスト 7</a> )。</p>
+</div>
+<div id="action_and_transition_04" class="exampleblock">
+<div class="title">リスト 7. <code>sample11/app.c</code></div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-c" data-lang="c">Unresolved directive in README.adoc - include::codes/sample12/appc.[]</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>ここでコミットしておきます。</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>修正できたら、 <code>sample12</code> を動かしてみましょう。</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_振舞いのモデルとコードの対応のまとめ">振舞いのモデルとコードの対応のまとめ</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>コードの振舞いを図で表してみた</p>
+<div class="ulist">
+<ul>
+<li>
+<p>失われた情報を追加して図やコードを見直した</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>責務の委譲</p>
+<div class="ulist">
+<ul>
+<li>
+<p>自分の仕事以外は別のクラスに任せる(委譲)ようになった</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>情報隠蔽</p>
+<div class="ulist">
+<ul>
+<li>
+<p>任されたクラスは、仕事の詳細を隠蔽している</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>ドメイン分割</p>
+<div class="ulist">
+<ul>
+<li>
+<p>複数のクラスに分けたしたことで、使うことばが変わった</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>仕様と設計と実装がつながった</p>
+<div class="ulist">
+<ul>
+<li>
+<p>使用で使っていることばが、実装にも使われている</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2021-10-12 00:35:12 +0900
+</div>
+</div>
+</body>
+</html>
